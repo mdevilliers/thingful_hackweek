@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/point-overlay/point-overlay.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <dom-module id="thingful_hackweek-app">
   <template>
     <style>
@@ -19,14 +20,24 @@
     </style>
     <google-map map="{{map}}" latitude="51.523410" longitude="-0.084109" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
     </google-map>
-    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data='[{"lat": 51.523410, "lng": -0.084109}]'>
+    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="[[data]]">
     </point-overlay>
+    <iron-ajax auto handle-as="json" url="../../sample.json" last-response="{{response}}"></iron-ajax>
   </template>
   <script>
     Polymer({
       is: 'thingful_hackweek-app',
       properties: {
         overlay: {
+          type: Object,
+          value: null
+        },
+        data: {
+          type: Object,
+          computed: 'parseResponse(response)',
+
+        },
+        response: {
           type: Object,
           value: null
         }
@@ -36,6 +47,21 @@
       },
       setPointSize: function () {
         this.overlay.uniforms.pointSize = Math.exp(0.3 * this.map.getZoom());
+      },
+      parseResponse(response) {
+        if (response) {
+          var output = []
+          for (var i = 0; i < response.length; i++) {
+            var entry = {
+              "lat": response[i].location.latitude,
+              "lng": response[i].location.longitude
+            };
+            output.push(entry);
+          }
+          return output;
+        } else {
+          return null;
+        }
       }
     });
   </script>

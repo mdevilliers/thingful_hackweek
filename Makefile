@@ -15,4 +15,4 @@ tmp/build/$(SERVER_NAME)-linux-amd64:
 tmp/build/$(SERVER_NAME)-windows-amd64.exe:
 	GOOS=windows GOARCH=amd64  go build -o $(@) ./cmd/server/
 
-
+.PHONY: build clean

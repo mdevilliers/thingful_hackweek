@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<dom-module id="thingful_hackweek-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      google-map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+      }
+    </style>
+    <!--    <h2>Hello [[prop1]]</h2>-->
+    <google-map map="{{map}}" latitude="51.51" longitude="-0.12" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-85}]},{"featureType":"water","stylers":[{"lightness":-20}]}]'> </google-map>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'thingful_hackweek-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'thingful_hackweek-app',
+        },
+      },
+
+    });
+  </script>
+</dom-module>

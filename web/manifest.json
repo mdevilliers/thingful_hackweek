@@ -1,0 +1,6 @@
+{
+  "name": "thingful_hackweek",
+  "short_name": "thingful_hackweek",
+  "start_url": "/",
+  "display": "standalone"
+}

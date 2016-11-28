@@ -18,16 +18,21 @@
         z-index: -1;
       }
     </style>
-    <google-map map="{{map}}" latitude="51.523410" longitude="-0.084109" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
+    <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="11" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
     </google-map>
     <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="[[data]]">
     </point-overlay>
-    <iron-ajax auto handle-as="json" url="../../sample.json" last-response="{{response}}"></iron-ajax>
+    <iron-ajax auto handle-as="json" url="[[url]]" last-response="{{response}}"></iron-ajax>
   </template>
   <script>
     Polymer({
       is: 'thingful_hackweek-app',
       properties: {
+        url: {
+          type: String,
+          //          value: "../../sample.json"
+          value: "http://localhost:3000/api/stream/"
+        },
         overlay: {
           type: Object,
           value: null
@@ -52,11 +57,14 @@
         if (response) {
           var output = []
           for (var i = 0; i < response.length; i++) {
-            var entry = {
-              "lat": response[i].location.latitude,
-              "lng": response[i].location.longitude
-            };
-            output.push(entry);
+            if (response[i].type == "tweet") {
+              console.log(response[i]);
+              var entry = {
+                "lat": response[i].location.latitude,
+                "lng": response[i].location.longitude
+              };
+              output.push(entry);
+            }
           }
           return output;
         } else {

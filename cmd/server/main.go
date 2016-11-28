@@ -94,7 +94,6 @@ func main() {
 					Data: r,
 				})
 			}
-			fmt.Println("message added...")
 			out <- items
 		}
 	}
@@ -130,9 +129,7 @@ func (a *api) streamer(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 
 	}
-
 	w.Write(j)
-
 }
 
 // MustFindInEnvironment looks for a value, logging with Panic if not found

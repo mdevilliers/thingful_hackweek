@@ -17,25 +17,26 @@
         z-index: -1;
       }
     </style>
-    <!--    <h2>Hello [[prop1]]</h2>-->
-    <google-map map="{{map}}" latitude="51.523410" longitude="-0.084109" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-85}]},{"featureType":"water","stylers":[{"lightness":-20}]}]'>
+    <google-map map="{{map}}" latitude="51.523410" longitude="-0.084109" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
     </google-map>
-    <point-overlay map="[[map]]" data='[{"lat": 51.523410, "lng": -0.084109}]'>
+    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data='[{"lat": 51.523410, "lng": -0.084109}]'>
     </point-overlay>
   </template>
-
   <script>
     Polymer({
-
       is: 'thingful_hackweek-app',
-
       properties: {
-        prop1: {
-          type: String,
-          value: 'thingful_hackweek-app',
-        },
+        overlay: {
+          type: Object,
+          value: null
+        }
       },
-
+      attached: function () {
+        this.overlay = document.getElementById("overlay");
+      },
+      setPointSize: function () {
+        this.overlay.uniforms.pointSize = Math.exp(0.3 * this.map.getZoom());
+      }
     });
   </script>
 </dom-module>

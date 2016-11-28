@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/point-overlay/point-overlay.html">
 <dom-module id="thingful_hackweek-app">
   <template>
     <style>
@@ -17,7 +18,10 @@
       }
     </style>
     <!--    <h2>Hello [[prop1]]</h2>-->
-    <google-map map="{{map}}" latitude="51.51" longitude="-0.12" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-85}]},{"featureType":"water","stylers":[{"lightness":-20}]}]'> </google-map>
+    <google-map map="{{map}}" latitude="51.523410" longitude="-0.084109" zoom="13" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-85}]},{"featureType":"water","stylers":[{"lightness":-20}]}]'>
+    </google-map>
+    <point-overlay map="[[map]]" data='[{"lat": 51.523410, "lng": -0.084109}]'>
+    </point-overlay>
   </template>
 
   <script>

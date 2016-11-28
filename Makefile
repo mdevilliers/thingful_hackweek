@@ -1,7 +1,10 @@
 SERVER_NAME=thingful_hackweek
 CLI_NAME=thingful_hackweek
 
-build : linux windows 
+build : linux windows
+
+clean :
+	rm -rf ./tmp/
 
 linux: tmp/build/$(SERVER_NAME)-linux-amd64 tmp/build/$(CLI_NAME)-linux-amd64
 windows: tmp/build/$(SERVER_NAME)-windows-amd64.exe tmp/build/$(CLI_NAME)-windows-amd64.exe

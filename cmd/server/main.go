@@ -50,9 +50,8 @@ func main() {
 	}
 
 	// classifier
-	classifier := NewClassifier()
+	classifier := NewWeatherClassifier()
 
-	// Convenience Demux demultiplexed stream messages
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
 

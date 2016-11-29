@@ -6,8 +6,8 @@ type classifier struct {
 	d map[string]bool
 }
 
-// NewClassifier returns the simplest text/weather classifier I can think of.
-func NewClassifier() *classifier {
+// NewWeatherClassifier returns the simplest text/weather classifier I can think of.
+func NewWeatherClassifier() *classifier {
 
 	keywords := []string{
 		"hot", "cold", "warm", "cool",
@@ -34,6 +34,7 @@ func NewClassifier() *classifier {
 		"rain", "rainy",
 		"frost",
 		"leaves",
+		"bluesky", "blue-sky",
 		"weather", "lovelyweather"}
 
 	d := map[string]bool{}

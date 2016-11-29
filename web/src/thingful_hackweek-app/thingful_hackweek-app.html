@@ -24,13 +24,13 @@
       }
     </style>
     <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="10" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]'>
-      <google-map-marker zIndex="-1" icon="../../img/twitterSmall.png" latitude="51.5" longitude="-0.1"></google-map-marker>
-      <google-map-marker zIndex="0" icon="../../img/googleSmall.png" latitude="51.5" longitude="-0.15"></google-map-marker>
-      <google-map-marker zIndex="-1" icon="../../img/twitterSmall.png" latitude="51.5" longitude="-0.2"></google-map-marker>
-      <google-map-marker zIndex="0" icon="../../img/googleSmall.png" latitude="51.5" longitude="-0.25"></google-map-marker>
-
-
       <template is="dom-repeat" items="{{data}}">
+        <template is="dom-repeat" items="{{item.things}}">
+          <google-map-marker icon="../../img/googleSmall.png" latitude="{{item.location.latitude}}" longitude="{{item.location.longitude}}">
+            <h2>Thing</h2>
+            <p><b>{{item.categories.0}}: </b>{{item.data.data.0.attributes.title}}</p>
+          </google-map-marker>
+        </template>
         <google-map-marker class="top" icon="../../img/twitterSmall.png" latitude="{{item.tweet.location.latitude}}" longitude="{{item.tweet.location.longitude}}">
           <h2>Tweet</h2>
           <p><b>{{item.tweet.categories.0}}: </b>{{item.tweet.data.text}}</p>
@@ -39,12 +39,6 @@
             <p><b>{{item.categories.0}}: </b>{{item.data.data.0.attributes.title}}</p>
           </template>
         </google-map-marker>
-        <template is="dom-repeat" items="{{item.things}}">
-          <google-map-marker icon="../../img/googleSmall.png" latitude="{{item.location.latitude}}" longitude="{{item.location.longitude}}">
-            <h2>Thing</h2>
-            <p><b>{{item.categories.0}}: </b>{{item.data.data.0.attributes.title}}</p>
-          </google-map-marker>
-        </template>
       </template>
     </google-map>
   </template>

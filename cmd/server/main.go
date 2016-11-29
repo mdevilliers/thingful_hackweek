@@ -13,11 +13,6 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-const (
-	// NearestThings is the number of things closest to the tweet to include in the results.
-	NearestThings = 3
-)
-
 func main() {
 
 	// get the secrets
@@ -54,7 +49,9 @@ func main() {
 		results: out,
 	}
 
-	// Convenience Demux demultiplexed stream messages
+	// classifier
+	classifier := NewWeatherClassifier()
+
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
 
@@ -62,15 +59,26 @@ func main() {
 
 			fmt.Println(tweet.Text, " @ ", tweet.Coordinates.Coordinates)
 
-			items := []item{
-				item{
-					Type: "tweet",
-					Location: location{
-						Latitude:  tweet.Coordinates.Coordinates[1],
-						Longitude: tweet.Coordinates.Coordinates[0],
-					},
-					Data: tweet,
+			tweetItem := item{
+				Type: "tweet",
+				Location: location{
+					Latitude:  tweet.Coordinates.Coordinates[1],
+					Longitude: tweet.Coordinates.Coordinates[0],
 				},
+				Data: tweet,
+			}
+
+			isWeather, score := classifier.IsWeather(tweet.Text)
+			fmt.Println("Is it about weather : ", isWeather, score)
+
+			if isWeather {
+				tweetItem.Categories = []string{"Weather"}
+			} else {
+				tweetItem.Categories = []string{"Unknown"}
+			}
+
+			items := []item{
+				tweetItem,
 			}
 
 			searchResults, err := thingfulClient.SearchByLocation(tweet.Coordinates.Coordinates[1], tweet.Coordinates.Coordinates[0], 5000)
@@ -79,23 +87,26 @@ func main() {
 				log.Fatal(err)
 			}
 
-			// access the nearest things
-			for i := 0; i < NearestThings; i++ {
+			for i := 0; i < len(searchResults.Data); i++ {
 
 				r, err := thingfulClient.Access(searchResults.Data[i].ID)
 
 				if err != nil {
+					log.Print(err.Error())
 					continue
 				}
 
-				items = append(items, item{
+				thing := item{
 					Type: "thing",
 					Location: location{
 						Latitude:  r.Data[0].Attributes.Location.Latitude,
 						Longitude: r.Data[0].Attributes.Location.Longitude,
 					},
-					Data: r,
-				})
+					Data:       r,
+					Categories: []string{CategoriseThing(r.Data[0].Relationships.Provider.Data.ID)},
+				}
+
+				items = append(items, thing)
 			}
 			out <- items
 		}
@@ -147,9 +158,10 @@ func MustFindInEnvironment(envVar string) string {
 }
 
 type item struct {
-	Type     string      `json:"type"`
-	Location location    `json:"location"`
-	Data     interface{} `json:"data"`
+	Type       string      `json:"type"`
+	Location   location    `json:"location"`
+	Data       interface{} `json:"data"`
+	Categories []string    `json:"categories"`
 }
 
 type location struct {

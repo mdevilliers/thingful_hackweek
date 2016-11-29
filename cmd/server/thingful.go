@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -28,22 +27,7 @@ func (c *client) Access(thinguid string) (*Results, error) {
 	template := "https://api.thingful.net/access?uid=%s"
 	url := fmt.Sprintf(template, thinguid)
 
-	jsonBytes, err := c.doGetRequest(url)
-
-	if err != nil {
-		return nil, err
-	}
-
-	results := Results{}
-	fmt.Println(string(jsonBytes))
-	err = json.Unmarshal(jsonBytes, &results)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &results, nil
-
+	return c.doGetRequest(url)
 }
 
 func (c *client) SearchByLocation(lat, long, radius float64) (*Results, error) {
@@ -51,25 +35,10 @@ func (c *client) SearchByLocation(lat, long, radius float64) (*Results, error) {
 	template := "https://api.thingful.net/search?geo-lat=%f&geo-long=%f&geo-radius=%f&limit=10&sort=distance"
 	url := fmt.Sprintf(template, lat, long, radius)
 
-	jsonBytes, err := c.doGetRequest(url)
-
-	if err != nil {
-		return nil, err
-	}
-
-	results := Results{}
-
-	err = json.Unmarshal(jsonBytes, &results)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &results, nil
-
+	return c.doGetRequest(url)
 }
 
-func (c *client) doGetRequest(url string) ([]byte, error) {
+func (c *client) doGetRequest(url string) (*Results, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
@@ -83,13 +52,24 @@ func (c *client) doGetRequest(url string) ([]byte, error) {
 	}
 
 	if res.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("StatusCode :%d ", res.StatusCode))
+		return nil, fmt.Errorf("error loading %s, statusCode :%d ", url, res.StatusCode)
 	}
 
 	defer res.Body.Close()
 
-	return ioutil.ReadAll(res.Body)
+	jsonBytes, err := ioutil.ReadAll(res.Body)
 
+	if err != nil {
+		return nil, err
+	}
+
+	results := Results{}
+	err = json.Unmarshal(jsonBytes, &results)
+
+	if err != nil {
+		return nil, err
+	}
+	return &results, nil
 }
 
 type Results struct {

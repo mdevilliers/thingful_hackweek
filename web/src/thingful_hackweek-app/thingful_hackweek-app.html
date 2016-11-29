@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 <link rel="import" href="../../bower_components/point-overlay/point-overlay.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <dom-module id="thingful_hackweek-app">
@@ -18,11 +19,11 @@
         z-index: -1;
       }
     </style>
-
-    <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="11" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
+    <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="10" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]'>
+      <template is="dom-repeat" items="{{data}}">
+        <google-map-marker open latitude="{{item.location.latitude}}" longitude="{{item.location.longitude}}"><b>{{item.categories.0}}: </b>{{item.data.text}}</google-map-marker>
+      </template>
     </google-map>
-    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="{{data}}">
-    </point-overlay>
   </template>
   <script>
     Polymer({
@@ -32,7 +33,10 @@
           type: String,
           value: "http://localhost:3000/api/stream/"
         },
-        tweetNumber: 10,
+        tweetNumber: {
+          type: Number,
+          value: 15
+        },
         overlay: {
           type: Object,
           value: null,
@@ -44,7 +48,18 @@
         },
         data: {
           type: Object,
-          value: [],
+          value: [{
+            "location": {
+              "latitude": 51.4714,
+              "longitude": -0.0625
+            },
+            "data": {
+              "text": "this is a test"
+            },
+            "categories": {
+              "0": "Unknown"
+            }
+          }],
           notify: true
         }
       },
@@ -67,11 +82,7 @@
         if (response) {
           for (var i = 0; i < response.length; i++) {
             if (response[i].type == "tweet") {
-              var entry = {
-                "lat": response[i].location.latitude,
-                "lng": response[i].location.longitude,
-              };
-              return entry;
+              return response[i];
             }
           }
         }
@@ -80,7 +91,7 @@
         console.log(entry);
         var oldData = this.data;
         oldData.push(entry);
-        this.data = oldData.slice(0);
+        this.data = oldData.slice(Math.max(0, oldData.length - this.tweetNumber));
       },
       fetch: function (path) {
         return new Promise((resolve, reject) => {
@@ -98,10 +109,6 @@
           httpRequest.open("GET", path);
           httpRequest.send();
         })
-      },
-      setPointSize: function () {
-        this.overlay.uniforms.pointSize = 15;
-        this.overlay.notifyPath('uniforms.pointSize', this.overlay.uniforms.pointSize);
       }
     });
   </script>

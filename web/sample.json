@@ -1,0 +1,15 @@
+[{
+  "view": "tweet",
+  "location": {
+    "latitude": 51.52,
+    "longitude": -0.08
+  },
+  "data": {}
+}, {
+  "view": "thing",
+  "location": {
+    "latitude": 51.52,
+    "longitude": -0.12
+  },
+  "data": {}
+}]

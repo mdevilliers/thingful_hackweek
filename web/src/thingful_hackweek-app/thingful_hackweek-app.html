@@ -1,0 +1,108 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/point-overlay/point-overlay.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<dom-module id="thingful_hackweek-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      google-map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+      }
+    </style>
+
+    <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="11" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
+    </google-map>
+    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="{{data}}">
+    </point-overlay>
+  </template>
+  <script>
+    Polymer({
+      is: 'thingful_hackweek-app',
+      properties: {
+        url: {
+          type: String,
+          value: "http://localhost:3000/api/stream/"
+        },
+        tweetNumber: 10,
+        overlay: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+        ajax: {
+          type: Object,
+          value: null
+        },
+        data: {
+          type: Object,
+          value: [],
+          notify: true
+        }
+      },
+      attached: function () {
+        this.overlay = document.getElementById("overlay");
+        this.makeRequest();
+      },
+      makeRequest: function () {
+        this.fetch(this.url)
+          .then(JSON.parse)
+          .then(this.parseResponse)
+          .then((entry) => {
+            this.parseEntry(entry)
+          })
+          .then((response) => {
+            this.makeRequest();
+          });
+      },
+      parseResponse: function (response) {
+        if (response) {
+          for (var i = 0; i < response.length; i++) {
+            if (response[i].type == "tweet") {
+              var entry = {
+                "lat": response[i].location.latitude,
+                "lng": response[i].location.longitude,
+              };
+              return entry;
+            }
+          }
+        }
+      },
+      parseEntry: function (entry) {
+        console.log(entry);
+        var oldData = this.data;
+        oldData.push(entry);
+        this.data = oldData.slice(0);
+      },
+      fetch: function (path) {
+        return new Promise((resolve, reject) => {
+          var httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4) {
+              if (httpRequest.status === 200 || httpRequest.status === 0) {
+                resolve(httpRequest.responseText);
+              }
+            }
+          };
+          httpRequest.onerror = function (error) {
+            reject(error);
+          }
+          httpRequest.open("GET", path);
+          httpRequest.send();
+        })
+      },
+      setPointSize: function () {
+        this.overlay.uniforms.pointSize = 15;
+        this.overlay.notifyPath('uniforms.pointSize', this.overlay.uniforms.pointSize);
+      }
+    });
+  </script>
+</dom-module>

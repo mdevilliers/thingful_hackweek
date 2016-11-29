@@ -34,8 +34,9 @@ func NewWeatherClassifier() *classifier {
 		"rain", "rainy",
 		"frost",
 		"leaves",
+		"pressure",
 		"bluesky", "blue-sky", "skies",
-		"weather", "lovelyweather"}
+		"weather", "lovelyweather", "ukweather"}
 
 	d := map[string]bool{}
 

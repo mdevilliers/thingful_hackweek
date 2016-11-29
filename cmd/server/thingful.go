@@ -39,6 +39,7 @@ func (c *client) SearchByLocation(lat, long, radius float64) (*Results, error) {
 }
 
 func (c *client) doGetRequest(url string) (*Results, error) {
+
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 

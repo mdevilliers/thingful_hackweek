@@ -104,7 +104,7 @@ func main() {
 					},
 					Data:       r,
 					Categories: []string{CategoriseThing(r.Data[0].Relationships.Provider.Data.ID)},
-					Distance:   r.Data[0].Attributes.Distance,
+					Distance:   searchResults.Data[i].Attributes.Distance,
 				}
 
 				items = append(items, thing)

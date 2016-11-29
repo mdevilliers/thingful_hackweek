@@ -21,7 +21,14 @@
     </style>
     <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="10" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]'>
       <template is="dom-repeat" items="{{data}}">
-        <google-map-marker open latitude="{{item.location.latitude}}" longitude="{{item.location.longitude}}"><b>{{item.categories.0}}: </b>{{item.data.text}}</google-map-marker>
+        <google-map-marker latitude="{{item.tweet.location.latitude}}" longitude="{{item.tweet.location.longitude}}">
+          <h2>Tweet</h2>
+          <p><b>{{item.tweet.categories.0}}: </b>{{item.tweet.data.text}}</p>
+          <h3>Things:</h3>
+          <template is="dom-repeat" items="{{item.things}}">
+            <p><b>{{item.categories.0}}: </b>{{item.data.data.0.attributes.title}}</p>
+          </template>
+        </google-map-marker>
       </template>
     </google-map>
   </template>
@@ -35,7 +42,7 @@
         },
         tweetNumber: {
           type: Number,
-          value: 15
+          value: 50
         },
         overlay: {
           type: Object,
@@ -48,18 +55,7 @@
         },
         data: {
           type: Object,
-          value: [{
-            "location": {
-              "latitude": 51.4714,
-              "longitude": -0.0625
-            },
-            "data": {
-              "text": "this is a test"
-            },
-            "categories": {
-              "0": "Unknown"
-            }
-          }],
+          value: [],
           notify: true
         }
       },
@@ -80,11 +76,19 @@
       },
       parseResponse: function (response) {
         if (response) {
+          var tweet;
+          var things = [];
           for (var i = 0; i < response.length; i++) {
             if (response[i].type == "tweet") {
-              return response[i];
+              tweet = response[i];
+            } else {
+              things.push(response[i]);
             }
           }
+          return ({
+            "tweet": tweet,
+            "things": things
+          });
         }
       },
       parseEntry: function (entry) {

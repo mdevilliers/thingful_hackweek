@@ -1,10 +1,7 @@
 package main
 
-import "fmt"
-
 func CategoriseThing(providerType string) string {
 
-	fmt.Println(providerType)
 	switch providerType {
 
 	case "api.citybik.es", "bikes.oobrien", "marlin.casa", "globalbikeshare", "citybikes":
@@ -29,7 +26,6 @@ func CategoriseThing(providerType string) string {
 		return "Transport"
 
 	case "thingspeak", "xively", "thethingsnetwork", "smartcitizen":
-
 		return "Random Stuff"
 
 	case "wikibeacon":

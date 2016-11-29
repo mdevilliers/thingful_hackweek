@@ -104,6 +104,7 @@ func main() {
 					},
 					Data:       r,
 					Categories: []string{CategoriseThing(r.Data[0].Relationships.Provider.Data.ID)},
+					Distance:   r.Data[0].Attributes.Distance,
 				}
 
 				items = append(items, thing)
@@ -161,6 +162,7 @@ type item struct {
 	Type       string      `json:"type"`
 	Location   location    `json:"location"`
 	Data       interface{} `json:"data"`
+	Distance   float64     `json:"distance"`
 	Categories []string    `json:"categories"`
 }
 

@@ -14,19 +14,22 @@ import (
 )
 
 const (
+	// NearestThings is the number of things closest to the tweet to include in the results.
 	NearestThings = 3
 )
 
 func main() {
 
 	// get the secrets
-	// TWITTER first
+	// twitter first
 	flags := flag.NewFlagSet("user-auth", flag.ExitOnError)
 	consumerKey := flags.String("consumer-key", "", "Twitter Consumer Key")
 	consumerSecret := flags.String("consumer-secret", "", "Twitter Consumer Secret")
 	accessToken := flags.String("access-token", "", "Twitter Access Token")
 	accessSecret := flags.String("access-secret", "", "Twitter Access Secret")
+
 	flags.Parse(os.Args[1:])
+
 	flagutil.SetFlagsFromEnv(flags, "TWITTER")
 
 	if *consumerKey == "" || *consumerSecret == "" || *accessToken == "" || *accessSecret == "" {
@@ -98,7 +101,7 @@ func main() {
 		}
 	}
 
-	fmt.Println("Starting Stream...")
+	fmt.Println("starting stream...")
 
 	filterParams := &twitter.StreamFilterParams{
 		Locations: []string{"-0.489,51.28,0.236,51.686"}, //london

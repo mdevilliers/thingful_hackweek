@@ -18,11 +18,11 @@
         z-index: -1;
       }
     </style>
+
     <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="11" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]' on-google-map-ready="setPointSize" on-zoom-changed="setPointSize">
     </google-map>
-    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="[[data]]">
+    <point-overlay id="overlay" map="[[map]]" uniforms="{{uniforms}}" data="{{data}}">
     </point-overlay>
-    <iron-ajax auto handle-as="json" url="[[url]]" last-response="{{response}}"></iron-ajax>
   </template>
   <script>
     Polymer({
@@ -30,46 +30,82 @@
       properties: {
         url: {
           type: String,
-          //          value: "../../sample.json"
           value: "http://localhost:3000/api/stream/"
         },
+        tweetNumber: 10,
         overlay: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+        ajax: {
           type: Object,
           value: null
         },
         data: {
           type: Object,
-          computed: 'parseResponse(response)',
-
-        },
-        response: {
-          type: Object,
-          value: null
+          //          value: [{
+          //            "lat": 51.55,
+          //            "lng": 0
+          //          }],
+          value: [],
+          notify: true
         }
       },
       attached: function () {
         this.overlay = document.getElementById("overlay");
+        this.makeRequest();
       },
-      setPointSize: function () {
-        this.overlay.uniforms.pointSize = Math.exp(0.3 * this.map.getZoom());
+      makeRequest: function () {
+        this.fetch(this.url)
+          .then(JSON.parse)
+          .then(this.parseResponse)
+          .then((entry) => {
+            this.parseEntry(entry)
+          })
+          .then((response) => {
+            this.makeRequest();
+          });
       },
-      parseResponse(response) {
+      parseResponse: function (response) {
         if (response) {
-          var output = []
           for (var i = 0; i < response.length; i++) {
             if (response[i].type == "tweet") {
-              console.log(response[i]);
               var entry = {
                 "lat": response[i].location.latitude,
-                "lng": response[i].location.longitude
+                "lng": response[i].location.longitude,
               };
-              output.push(entry);
+              return entry;
             }
           }
-          return output;
-        } else {
-          return null;
         }
+      },
+      parseEntry: function (entry) {
+        console.log(entry);
+        var oldData = this.data;
+        oldData.push(entry);
+        this.data = oldData.slice(0);
+      },
+      fetch: function (path) {
+        return new Promise((resolve, reject) => {
+          var httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4) {
+              if (httpRequest.status === 200 || httpRequest.status === 0) {
+                resolve(httpRequest.responseText);
+              }
+            }
+          };
+          httpRequest.onerror = function (error) {
+            reject(error);
+          }
+          httpRequest.open("GET", path);
+          httpRequest.send();
+        })
+      },
+      setPointSize: function () {
+        this.overlay.uniforms.pointSize = 15;
+        this.overlay.notifyPath('uniforms.pointSize', this.overlay.uniforms.pointSize);
       }
     });
   </script>

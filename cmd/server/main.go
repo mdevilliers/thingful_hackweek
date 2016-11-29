@@ -73,6 +73,8 @@ func main() {
 
 			if isWeather {
 				tweetItem.Categories = []string{"Weather"}
+			} else {
+				tweetItem.Categories = []string{"Unknown"}
 			}
 
 			items := []item{
@@ -90,17 +92,21 @@ func main() {
 				r, err := thingfulClient.Access(searchResults.Data[i].ID)
 
 				if err != nil {
+					log.Print(err.Error())
 					continue
 				}
 
-				items = append(items, item{
+				thing := item{
 					Type: "thing",
 					Location: location{
 						Latitude:  r.Data[0].Attributes.Location.Latitude,
 						Longitude: r.Data[0].Attributes.Location.Longitude,
 					},
-					Data: r,
-				})
+					Data:       r,
+					Categories: []string{CategoriseThing(r.Data[0].Relationships.Provider.Data.ID)},
+				}
+
+				items = append(items, thing)
 			}
 			out <- items
 		}

@@ -21,7 +21,13 @@
     </style>
     <google-map map="{{map}}" latitude="51.50 " longitude="-0.12" zoom="10" api-key="AIzaSyAagcNHlvtF3rPLguDs1AXg5prlQFMqrOo" styles='[{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"lightness":-50}]}]'>
       <template is="dom-repeat" items="{{data}}">
-        <google-map-marker latitude="{{item.tweet.location.latitude}}" longitude="{{item.tweet.location.longitude}}">
+        <template is="dom-repeat" items="{{item.things}}">
+          <google-map-marker icon="../../img/googleSmall.png" latitude="{{item.location.latitude}}" longitude="{{item.location.longitude}}">
+            <h2>Thing</h2>
+            <p><b>{{item.categories.0}}: </b>{{item.data.data.0.attributes.title}}</p>
+          </google-map-marker>
+        </template>
+        <google-map-marker class="top" icon="../../img/twitterSmall.png" latitude="{{item.tweet.location.latitude}}" longitude="{{item.tweet.location.longitude}}">
           <h2>Tweet</h2>
           <p><b>{{item.tweet.categories.0}}: </b>{{item.tweet.data.text}}</p>
           <h3>Things:</h3>

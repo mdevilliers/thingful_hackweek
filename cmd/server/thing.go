@@ -36,7 +36,7 @@ func DistinctByLocationAndCategory(client *client, lat, long, radius float64) ([
 			continue
 		}
 
-		message := getInsight(k, distinct[k])
+		insight := getInsight(k, distinct[k])
 
 		thing := item{
 			Type: "thing",
@@ -46,7 +46,7 @@ func DistinctByLocationAndCategory(client *client, lat, long, radius float64) ([
 			},
 			Data:       r,
 			Categories: []string{k},
-			Message:    message,
+			Insight:    insight,
 			Distance:   distinct[k].Attributes.Distance,
 		}
 

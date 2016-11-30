@@ -144,7 +144,7 @@ type item struct {
 	Data       interface{} `json:"data"`
 	Distance   float64     `json:"distance"`
 	Categories []string    `json:"categories"`
-	Message    string      `json:"message"`
+	Insight    string      `json:"insight"`
 }
 
 type location struct {

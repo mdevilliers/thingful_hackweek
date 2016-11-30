@@ -65,7 +65,7 @@ func categoriseThing(providerType string) string {
 	case "api.citybik.es", "bikes.oobrien", "marlin.casa", "globalbikeshare", "citybikes":
 		return "Bike Dock"
 
-	case "openweathermap", "metoffice", "wunderground":
+	case "openweathermap", "metoffice", "wunderground", "wowmet":
 		return "Weather Station"
 
 	case "aqicn", "netatmo":

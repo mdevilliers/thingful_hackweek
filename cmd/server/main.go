@@ -81,7 +81,7 @@ func main() {
 				tweetItem,
 			}
 
-			searchResults, err := thingfulClient.SearchByLocation(tweet.Coordinates.Coordinates[1], tweet.Coordinates.Coordinates[0], 5000)
+			searchResults, err := thingfulClient.SearchByLocation(tweet.Coordinates.Coordinates[1], tweet.Coordinates.Coordinates[0], 5000, 10)
 
 			if err != nil {
 				log.Fatal(err)
@@ -164,6 +164,7 @@ type item struct {
 	Data       interface{} `json:"data"`
 	Distance   float64     `json:"distance"`
 	Categories []string    `json:"categories"`
+	Message    string      `json:"message"`
 }
 
 type location struct {

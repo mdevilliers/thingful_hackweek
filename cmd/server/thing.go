@@ -101,7 +101,7 @@ func constructMessage(category string, thing Thing) string {
 		return fmt.Sprintf("Weather good enough for a cycle? Nearest cycle dock is %f meters away?", thing.Attributes.Distance)
 
 	case "Transport":
-		return fmt.Sprintf("How about getting the bus from %s", thing.Attributes.Title)
+		return fmt.Sprintf("Nice enough to leave the car behind? How about getting public transport from %s?", thing.Attributes.Title)
 	}
 
 	return ""

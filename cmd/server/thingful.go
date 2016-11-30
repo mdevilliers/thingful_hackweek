@@ -38,40 +38,6 @@ func (c *client) SearchByLocation(lat, long, radius float64, limit int) (*Result
 	return c.doGetRequest(url)
 }
 
-func (c *client) DistinctByLocationAndCategory(lat, long, radius float64) (*Results, error) {
-
-	results, err := c.SearchByLocation(lat, long, radius, 500)
-
-	if err != nil {
-		return nil, err
-	}
-
-	distinct := map[string]Thing{}
-
-	for i, _ := range results.Data {
-
-		category := CategoriseThing(results.Data[i].Relationships.Provider.Data.ID)
-
-		_, found := distinct[category]
-
-		if !found {
-			distinct[category] = results.Data[i]
-		}
-	}
-
-	toReturn := &Results{
-		Data: []Thing{},
-	}
-
-	for k, _ := range distinct {
-		toReturn.Data = append(toReturn.Data, distinct[k])
-
-	}
-
-	return toReturn, nil
-
-}
-
 func (c *client) doGetRequest(url string) (*Results, error) {
 
 	req, err := http.NewRequest("GET", url, nil)

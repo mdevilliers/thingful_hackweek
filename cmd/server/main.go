@@ -69,7 +69,7 @@ func main() {
 			}
 
 			isWeather, score := classifier.IsWeather(tweet.Text)
-			fmt.Println("Is it about weather : ", isWeather, score)
+			fmt.Println("Is it about weather? : ", isWeather, score)
 
 			if isWeather {
 				tweetItem.Categories = []string{"Weather"}
@@ -81,34 +81,14 @@ func main() {
 				tweetItem,
 			}
 
-			searchResults, err := thingfulClient.SearchByLocation(tweet.Coordinates.Coordinates[1], tweet.Coordinates.Coordinates[0], 5000)
+			things, err := DistinctByLocationAndCategory(thingfulClient, tweet.Coordinates.Coordinates[1], tweet.Coordinates.Coordinates[0], 5000)
 
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			for i := 0; i < len(searchResults.Data); i++ {
+			items = append(items, things...)
 
-				r, err := thingfulClient.Access(searchResults.Data[i].ID)
-
-				if err != nil {
-					log.Print(err.Error())
-					continue
-				}
-
-				thing := item{
-					Type: "thing",
-					Location: location{
-						Latitude:  r.Data[0].Attributes.Location.Latitude,
-						Longitude: r.Data[0].Attributes.Location.Longitude,
-					},
-					Data:       r,
-					Categories: []string{CategoriseThing(r.Data[0].Relationships.Provider.Data.ID)},
-					Distance:   searchResults.Data[i].Attributes.Distance,
-				}
-
-				items = append(items, thing)
-			}
 			out <- items
 		}
 	}
@@ -164,6 +144,7 @@ type item struct {
 	Data       interface{} `json:"data"`
 	Distance   float64     `json:"distance"`
 	Categories []string    `json:"categories"`
+	Insight    string      `json:"insight"`
 }
 
 type location struct {

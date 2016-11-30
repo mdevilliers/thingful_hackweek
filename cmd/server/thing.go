@@ -36,7 +36,7 @@ func DistinctByLocationAndCategory(client *client, lat, long, radius float64) ([
 			continue
 		}
 
-		message := constructMessage(k, distinct[k])
+		message := getInsight(k, distinct[k])
 
 		thing := item{
 			Type: "thing",
@@ -93,7 +93,7 @@ func categoriseThing(providerType string) string {
 	return "Unknown"
 }
 
-func constructMessage(category string, thing Thing) string {
+func getInsight(category string, thing Thing) string {
 
 	switch category {
 
@@ -104,6 +104,6 @@ func constructMessage(category string, thing Thing) string {
 		return fmt.Sprintf("Nice enough to leave the car behind? How about getting public transport from %s?", thing.Attributes.Title)
 	}
 
-	return ""
+	return "No insight gained."
 
 }
